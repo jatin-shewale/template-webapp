@@ -3,141 +3,156 @@
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { User, Menu, X, Sparkles } from "lucide-react"
+import { User, Menu, X, Music, Disc } from "lucide-react"
 import { useAuth } from "@/contexts/auth-context"
 import { useSubscription } from "@/contexts/subscription-context"
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { motion, AnimatePresence } from "framer-motion"
 
 export function Navigation() {
   const pathname = usePathname()
   const { user, isLoading } = useAuth()
   const { isPro } = useSubscription()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [scrolled, setScrolled] = useState(false)
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 20)
+    }
+    window.addEventListener("scroll", handleScroll)
+    return () => window.removeEventListener("scroll", handleScroll)
+  }, [])
+
+  const navLinks = [
+    { name: "Explore", href: "/wrapped" },
+    { name: "Pricing", href: "/upgrade" },
+  ]
 
   return (
-    <>
-      {/* Mobile Navigation */}
-      <nav className="md:hidden border-b border-border/50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50 w-full">
-        <div className="container mx-auto px-6 py-5">
-          <div className="flex items-center justify-between">
-            <Link
-              href="/"
-              className="flex items-center gap-2 hover:opacity-80 transition-opacity"
+    <header
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        scrolled ? "py-4" : "py-6"
+      }`}
+    >
+      <nav
+        className={`container mx-auto px-6 transition-all duration-300 ${
+          scrolled ? "max-w-5xl" : "max-w-7xl"
+        }`}
+      >
+        <div
+          className={`flex items-center justify-between px-6 py-3 rounded-2xl transition-all duration-300 ${
+            scrolled ? "glass shadow-2xl" : "bg-transparent"
+          }`}
+        >
+          <Link
+            href="/"
+            className="flex items-center gap-2 group transition-all duration-300"
+          >
+            <motion.div
+              whileHover={{ rotate: 180 }}
+              transition={{ duration: 0.5 }}
+              className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-lg shadow-primary/20"
             >
-              <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
-                <Sparkles className="w-5 h-5 text-primary-foreground" />
-              </div>
-              <span className="font-semibold">8x Template</span>
-            </Link>
-            <button
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2"
-            >
-              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-            </button>
-          </div>
-        </div>
+              <Music className="w-6 h-6 text-white" />
+            </motion.div>
+            <span className="font-bold text-2xl tracking-tight text-white group-hover:text-primary transition-colors">
+              Sound<span className="text-primary">DNA</span>
+            </span>
+          </Link>
 
-        {/* Mobile Menu */}
-        {mobileMenuOpen && (
-          <div className="border-t border-border/50 px-6 py-4 space-y-4">
-            {!isLoading && (
-              <>
-                {user ? (
-                  <>
-                    <Link
-                      href="/profile"
-                      className="block py-2"
-                      onClick={() => setMobileMenuOpen(false)}
-                    >
-                      Profile
-                    </Link>
-                    {!isPro && (
-                      <Link
-                        href="/upgrade"
-                        onClick={() => setMobileMenuOpen(false)}
-                      >
-                        <Button className="w-full">Upgrade to Pro</Button>
-                      </Link>
-                    )}
-                  </>
-                ) : (
-                  <>
-                    <Link
-                      href="/upgrade"
-                      className="block py-2"
-                      onClick={() => setMobileMenuOpen(false)}
-                    >
-                      Pricing
-                    </Link>
-                    <Link
-                      href="/auth/login"
-                      onClick={() => setMobileMenuOpen(false)}
-                    >
-                      <Button className="w-full">Sign In</Button>
-                    </Link>
-                  </>
-                )}
-              </>
-            )}
-          </div>
-        )}
-      </nav>
+          {/* Desktop Links */}
+          <div className="hidden md:flex items-center gap-8">
+            {navLinks.map((link) => (
+              <Link
+                key={link.name}
+                href={link.href}
+                className={`text-sm font-medium transition-colors hover:text-primary ${
+                  pathname === link.href ? "text-primary" : "text-white/70"
+                }`}
+              >
+                {link.name}
+              </Link>
+            ))}
+            
+            <div className="h-4 w-[1px] bg-white/10" />
 
-      {/* Desktop Navigation */}
-      <nav className="hidden md:block border-b border-border/50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
-        <div className="container mx-auto px-6 py-5">
-          <div className="flex items-center justify-between">
-            <Link
-              href="/"
-              className="flex items-center gap-2 hover:opacity-80 transition-opacity"
-            >
-              <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
-                <Sparkles className="w-5 h-5 text-primary-foreground" />
-              </div>
-              <span className="font-semibold text-lg">8x Template</span>
-            </Link>
-
-            <div className="flex items-center gap-6">
-              {!isLoading && (
-                <>
-                  {user ? (
-                    <div className="flex items-center gap-4">
-                      <Link
-                        href="/profile"
-                        className={`transition-colors ${
-                          pathname === "/profile" ? "text-primary" : "text-foreground/80 hover:text-foreground"
-                        }`}
-                        title="Profile"
-                      >
-                        <User className="w-5 h-5" />
-                      </Link>
-                      {!isPro && (
-                        <Link href="/upgrade">
-                          <Button variant="outline" size="sm" className="text-sm bg-transparent">
-                            Upgrade
-                          </Button>
-                        </Link>
-                      )}
-                    </div>
-                  ) : (
-                    <div className="flex items-center gap-3">
-                      <Link href="/upgrade">
-                        <Button variant="ghost" size="sm" className="text-sm">
-                          Pricing
-                        </Button>
-                      </Link>
-                      <Button size="sm" className="text-sm" asChild>
-                        <Link href="/auth/login">Sign In</Link>
-                      </Button>
-                    </div>
-                  )}
-                </>
+            <div className="flex items-center gap-4">
+              {!isLoading && user ? (
+                <div className="flex items-center gap-4">
+                  <Link
+                    href="/profile"
+                    className={`flex items-center gap-2 px-4 py-2 rounded-xl transition-all ${
+                      pathname === "/profile" ? "bg-primary/20 text-primary" : "text-white/70 hover:bg-white/5"
+                    }`}
+                  >
+                    <User className="w-4 h-4" />
+                    <span className="text-sm font-medium">Profile</span>
+                  </Link>
+                </div>
+              ) : (
+                <Link href="/spotify/login">
+                  <Button className="rounded-xl bg-primary hover:bg-primary/90 text-white shadow-lg shadow-primary/20 border-none px-6">
+                    Connect Spotify
+                  </Button>
+                </Link>
               )}
             </div>
           </div>
+
+          {/* Mobile Menu Button */}
+          <motion.button
+            whileTap={{ scale: 0.9 }}
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="md:hidden p-2 rounded-xl glass text-white"
+          >
+            {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          </motion.button>
         </div>
+
+        {/* Mobile Menu */}
+        <AnimatePresence>
+          {mobileMenuOpen && (
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              className="md:hidden mt-4 p-6 rounded-2xl glass shadow-2xl space-y-4"
+            >
+              {navLinks.map((link) => (
+                <Link
+                  key={link.name}
+                  href={link.href}
+                  className="block py-2 text-lg font-medium text-white/80 hover:text-primary transition-colors"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  {link.name}
+                </Link>
+              ))}
+              <div className="pt-4 border-t border-white/10">
+                {!isLoading && (
+                  user ? (
+                    <Link
+                      href="/profile"
+                      className="flex items-center gap-2 py-2 text-white/80 hover:text-primary transition-colors"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      <User className="w-5 h-5" />
+                      <span>Profile</span>
+                    </Link>
+                  ) : (
+                    <Link href="/spotify/login" onClick={() => setMobileMenuOpen(false)}>
+                      <Button className="w-full rounded-xl bg-primary hover:bg-primary/90">
+                        Connect Spotify
+                      </Button>
+                    </Link>
+                  )
+                )}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </nav>
-    </>
+    </header>
   )
 }

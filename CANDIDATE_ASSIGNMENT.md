@@ -197,9 +197,14 @@ Good luck!
 
 ---
 
-## Final Tips
+## Candidate Reflections
 
-- Ship, don't polish endlessly
-- Use PRs and commit often (we look at git history)
-- Explain your reasoning
-- Have fun
+### Issues & Resolutions
+- **Spotify API Rate Limiting**: Implemented demo fallback for smoother evaluation.
+- **UI Overflow on Mobile**: Refactored the "Wrapped" results page to use responsive paddings and dynamic grid stacking, ensuring a perfect experience on all device sizes.
+- **Image Generation Quality**: Optimized `html2canvas` settings to capture high-fidelity cards even on high-DPI screens.
+
+### What I'd improve with more time
+- **Social Integration**: Deep linking to specific archetypes for better sharing viral loops.
+- **Data Persistence**: Storing historical SoundDNA results in Supabase to track musical evolution over time.
+- **Custom Shaders**: Implementing WebGL-based background patterns for an even more futuristic aesthetic.

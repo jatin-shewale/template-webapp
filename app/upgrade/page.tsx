@@ -5,13 +5,14 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { Navigation } from "@/components/navigation"
 import { Button } from "@/components/ui/button"
-import { CheckCircle, Sparkles, Zap, Shield } from "lucide-react"
+import { CheckCircle, Sparkles, Zap, Shield, Music, Star, ArrowRight } from "lucide-react"
 import { useSubscription } from "@/contexts/subscription-context"
 import { useAuth } from "@/contexts/auth-context"
 import { toast } from "sonner"
+import { motion } from "framer-motion"
 
 export default function UpgradePage() {
-  const { isPro, tier, upgradeToPro, downgradeToFree, isLoading: subLoading } = useSubscription()
+  const { isPro, upgradeToPro, downgradeToFree, isLoading: subLoading } = useSubscription()
   const { user, isLoading: authLoading } = useAuth()
   const router = useRouter()
   const [isProcessing, setIsProcessing] = useState(false)
@@ -53,68 +54,68 @@ export default function UpgradePage() {
     return (
       <div className="min-h-screen bg-background">
         <Navigation />
-        <div className="flex items-center justify-center px-4 py-16 min-h-[calc(100vh-80px)]">
-          <div className="max-w-2xl w-full">
-            {/* Header */}
-            <div className="text-center mb-12">
-              <div className="mb-6 flex justify-center">
-                <CheckCircle className="w-16 h-16 text-primary" />
+        <div className="flex items-center justify-center px-4 py-32 min-h-[calc(100vh-80px)]">
+          <div className="max-w-2xl w-full text-center">
+            <motion.div
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              className="mb-12"
+            >
+              <div className="w-24 h-24 bg-primary/20 rounded-full flex items-center justify-center mx-auto mb-8 shadow-2xl shadow-primary/20">
+                <Star className="w-12 h-12 text-primary fill-primary" />
               </div>
-              <h1 className="text-5xl font-light tracking-tight mb-4">
-                You're a <span className="font-semibold text-primary">Pro</span> member
+              <h1 className="text-5xl font-black text-white tracking-tight mb-4">
+                You're a <span className="text-primary">PRO</span> Member
               </h1>
-              <p className="text-xl text-muted-foreground font-light">
-                Thank you for upgrading! You have access to all Pro features.
+              <p className="text-xl text-white/50 font-medium">
+                You've unlocked the full potential of your musical identity.
               </p>
-            </div>
+            </motion.div>
 
-            {/* Current Plan Card */}
-            <div className="border-2 border-primary rounded-2xl p-8 bg-card/50 mb-8">
-              <div className="flex items-center justify-between mb-4">
+            <div className="glass border-primary/20 rounded-[2.5rem] p-10 bg-gradient-to-br from-primary/10 to-transparent mb-12 text-left relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-primary/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
+              
+              <div className="flex items-center justify-between mb-8">
                 <div>
-                  <div className="text-sm text-primary font-medium mb-1">Current Plan</div>
-                  <div className="text-2xl font-bold flex items-center gap-2">
-                    <Sparkles className="w-5 h-5" />
-                    Pro Plan
+                  <div className="text-primary font-bold uppercase tracking-widest text-xs mb-2">Current Identity</div>
+                  <div className="text-3xl font-black text-white flex items-center gap-2">
+                    <Sparkles className="w-6 h-6 text-primary" />
+                    Pro Status
                   </div>
                 </div>
-                <div className="text-right">
-                  <div className="text-sm text-muted-foreground mb-1">Status</div>
-                  <div className="font-medium text-green-500">Active</div>
+                <div className="px-4 py-2 bg-green-500/20 text-green-400 rounded-full text-sm font-bold border border-green-500/20">
+                  Active
                 </div>
               </div>
 
-              <div className="mt-6 pt-6 border-t border-border">
-                <h4 className="text-sm font-medium mb-3">Your Pro benefits:</h4>
-                <ul className="space-y-2 text-sm text-muted-foreground">
-                  <li className="flex items-center gap-2">
-                    <CheckCircle className="w-4 h-4 text-primary" />
-                    Unlimited access to all features
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <CheckCircle className="w-4 h-4 text-primary" />
-                    Priority support
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <CheckCircle className="w-4 h-4 text-primary" />
-                    Advanced analytics
-                  </li>
-                </ul>
+              <div className="space-y-4 pt-6 border-t border-white/5">
+                <h4 className="text-white font-bold mb-4 uppercase tracking-wider text-xs">Unlocked Benefits</h4>
+                {[
+                  "Unlimited SoundDNA Reports",
+                  "Priority Data Processing",
+                  "Advanced Genre Analytics",
+                  "High-Resolution Card Exports"
+                ].map((benefit) => (
+                  <div key={benefit} className="flex items-center gap-3 text-white/70">
+                    <CheckCircle className="w-5 h-5 text-primary" />
+                    <span className="font-medium">{benefit}</span>
+                  </div>
+                ))}
               </div>
             </div>
 
-            {/* Actions */}
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button size="lg" asChild>
+            <div className="flex flex-col sm:flex-row gap-6 justify-center">
+              <Button size="lg" className="px-10 py-8 text-xl font-bold bg-primary hover:bg-primary/90 rounded-2xl" asChild>
                 <Link href="/profile">Manage Account</Link>
               </Button>
               <Button
                 size="lg"
                 variant="outline"
+                className="px-10 py-8 text-xl font-bold border-white/10 glass text-white hover:bg-white/5 rounded-2xl"
                 onClick={handleDowngrade}
                 disabled={isProcessing}
               >
-                {isProcessing ? "Processing..." : "Downgrade to Free"}
+                {isProcessing ? "Processing..." : "Downgrade"}
               </Button>
             </div>
           </div>
@@ -123,103 +124,112 @@ export default function UpgradePage() {
     )
   }
 
-  // Show pricing for free users
   return (
     <div className="min-h-screen bg-background">
       <Navigation />
-      <div className="flex items-center justify-center px-4 py-16 min-h-[calc(100vh-80px)]">
-        <div className="max-w-4xl w-full">
+      <div className="container mx-auto px-6 pt-40 pb-20">
+        <div className="max-w-5xl mx-auto">
           {/* Header */}
-          <div className="text-center mb-16">
-            <h1 className="text-6xl font-light tracking-tight mb-4">
-              Upgrade to <span className="font-semibold text-primary">Pro</span>
+          <div className="text-center mb-24 space-y-6">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass text-primary text-sm font-bold tracking-widest uppercase border-primary/20"
+            >
+              <Zap className="w-4 h-4" />
+              <span>Elevate your identity</span>
+            </motion.div>
+            <h1 className="text-6xl md:text-7xl font-black text-white tracking-tight">
+              Go <span className="text-primary">PRO.</span>
             </h1>
-            <p className="text-xl text-muted-foreground font-light">
-              Unlock all features and take your experience to the next level.
+            <p className="text-xl text-white/50 font-medium max-w-2xl mx-auto">
+              Unlock the complete genome of your musical taste with advanced analytics and premium features.
             </p>
           </div>
 
-          {/* Pricing Cards */}
-          <div className="grid md:grid-cols-2 gap-6 mb-12">
+          {/* Pricing Grid */}
+          <div className="grid md:grid-cols-2 gap-8 mb-16 items-center">
             {/* Free Plan */}
-            <div className="border border-border rounded-2xl p-8 bg-card/50">
-              <div className="mb-6">
-                <h3 className="text-lg font-medium text-muted-foreground mb-2">Free</h3>
-                <div className="flex items-baseline gap-1">
-                  <span className="text-4xl font-bold">$0</span>
-                  <span className="text-muted-foreground">/month</span>
+            <div className="glass border-white/5 rounded-[2.5rem] p-10 space-y-10 opacity-60">
+              <div className="space-y-4">
+                <h3 className="text-xl font-bold text-white/40 uppercase tracking-widest">Basic</h3>
+                <div className="flex items-baseline gap-2">
+                  <span className="text-5xl font-black text-white">$0</span>
+                  <span className="text-white/40 font-bold uppercase tracking-widest text-xs">/ Forever</span>
                 </div>
               </div>
 
-              <ul className="space-y-3 mb-8">
-                <li className="flex items-center gap-3 text-muted-foreground">
-                  <CheckCircle className="w-5 h-5 text-muted-foreground/50" />
-                  Basic features
-                </li>
-                <li className="flex items-center gap-3 text-muted-foreground">
-                  <CheckCircle className="w-5 h-5 text-muted-foreground/50" />
-                  Limited usage
-                </li>
-                <li className="flex items-center gap-3 text-muted-foreground">
-                  <CheckCircle className="w-5 h-5 text-muted-foreground/50" />
-                  Community support
-                </li>
-              </ul>
+              <div className="space-y-4 border-t border-white/5 pt-10">
+                {[
+                  "1 SoundDNA Report",
+                  "Standard Processing",
+                  "Basic Analytics",
+                ].map((feature) => (
+                  <div key={feature} className="flex items-center gap-3 text-white/50">
+                    <div className="w-5 h-5 rounded-full bg-white/5 flex items-center justify-center">
+                      <CheckCircle className="w-3 h-3" />
+                    </div>
+                    <span className="font-medium">{feature}</span>
+                  </div>
+                ))}
+              </div>
 
-              <Button variant="outline" className="w-full" disabled>
+              <Button variant="outline" className="w-full py-8 rounded-2xl border-white/10 text-white font-bold" disabled>
                 Current Plan
               </Button>
             </div>
 
             {/* Pro Plan */}
-            <div className="relative border-2 border-primary rounded-2xl p-8 bg-card/50">
-              <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground px-4 py-1 rounded-full text-sm font-medium">
-                Recommended
+            <div className="relative glass border-primary/50 rounded-[3rem] p-12 space-y-10 bg-gradient-to-br from-primary/20 to-transparent shadow-2xl shadow-primary/20 scale-105 z-10">
+              <div className="absolute -top-5 left-1/2 -translate-x-1/2 bg-primary text-white px-6 py-2 rounded-full text-sm font-black uppercase tracking-widest shadow-xl">
+                MOST POPULAR
               </div>
 
-              <div className="mb-6">
-                <h3 className="text-lg font-medium text-primary mb-2 flex items-center gap-2">
-                  <Sparkles className="w-4 h-4" />
-                  Pro
-                </h3>
-                <div className="flex items-baseline gap-1">
-                  <span className="text-4xl font-bold">$9.99</span>
-                  <span className="text-muted-foreground">/month</span>
+              <div className="space-y-4">
+                <h3 className="text-xl font-bold text-primary uppercase tracking-[0.2em]">Unlimited</h3>
+                <div className="flex items-baseline gap-2">
+                  <span className="text-6xl font-black text-white">$9.99</span>
+                  <span className="text-white/40 font-bold uppercase tracking-widest text-xs">/ Month</span>
                 </div>
               </div>
 
-              <ul className="space-y-3 mb-8">
-                <li className="flex items-center gap-3">
-                  <Zap className="w-5 h-5 text-primary" />
-                  Unlimited access to all features
-                </li>
-                <li className="flex items-center gap-3">
-                  <Shield className="w-5 h-5 text-primary" />
-                  Priority support
-                </li>
-                <li className="flex items-center gap-3">
-                  <Sparkles className="w-5 h-5 text-primary" />
-                  Advanced analytics & insights
-                </li>
-              </ul>
+              <div className="space-y-6 border-t border-white/10 pt-10">
+                {[
+                  { icon: Zap, text: "Unlimited DNA Analysis" },
+                  { icon: Shield, text: "Priority Server Access" },
+                  { icon: Sparkles, text: "Deep Genre Insights" },
+                  { icon: Star, text: "Exclusive Archetypes" },
+                ].map((item) => (
+                  <div key={item.text} className="flex items-center gap-4 text-white">
+                    <div className="w-8 h-8 rounded-xl bg-primary/20 flex items-center justify-center">
+                      <item.icon className="w-4 h-4 text-primary" />
+                    </div>
+                    <span className="font-bold">{item.text}</span>
+                  </div>
+                ))}
+              </div>
 
               <Button
-                className="w-full"
-                size="lg"
+                className="w-full py-10 rounded-[1.5rem] bg-primary hover:bg-primary/90 text-white text-xl font-black shadow-2xl shadow-primary/30 group"
                 onClick={handleUpgrade}
                 disabled={isProcessing || authLoading || subLoading}
               >
-                {isProcessing ? "Processing..." : "Upgrade to Pro"}
+                {isProcessing ? "Processing..." : "Get Pro Now"}
+                <ArrowRight className="ml-2 w-6 h-6 group-hover:translate-x-1 transition-transform" />
               </Button>
             </div>
           </div>
 
-          {/* Footer note */}
-          <div className="text-center text-sm text-muted-foreground">
-            <p>This is a demo. No real payment is processed.</p>
+          <div className="text-center space-y-4 opacity-40">
+            <div className="flex items-center justify-center gap-2">
+              <Music className="w-4 h-4" />
+              <p className="text-sm font-bold uppercase tracking-widest">Demo Simulation Only</p>
+            </div>
+            <p className="text-xs">No real payment will be processed. Credits to Spotify for data access.</p>
           </div>
         </div>
       </div>
     </div>
   )
 }
+
