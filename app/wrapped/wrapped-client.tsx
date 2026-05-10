@@ -50,7 +50,7 @@ export function WrappedClient() {
 
   useEffect(() => {
     // Try real API first, fall back to demo
-    fetch("/api/spotify/analyze")
+    fetch("/api/spotify/analyze", { credentials: "include" })
       .then((res) => {
         if (!res.ok) throw new Error("Not authenticated")
         return res.json()

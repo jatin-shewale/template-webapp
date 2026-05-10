@@ -3,7 +3,12 @@
     "allow": [
       "Bash(pnpm add *)",
       "Bash(pnpm dev *)",
-      "Bash(taskkill /f /im node.exe)"
+      "Bash(taskkill /f /im node.exe)",
+      "Bash(pkill -f \"next dev\")",
+      "Bash(taskkill //IM node.exe //F)",
+      "Bash(pnpm dev:https *)",
+      "Bash(curl -sk https://127.0.0.1:3000/)",
+      "Bash(curl *)"
     ]
   }
 }

@@ -9,10 +9,16 @@ const spotifyApi = new SpotifyWebApi({
 })
 
 export const getSpotifyApi = (accessToken?: string) => {
+  const client = new SpotifyWebApi({
+    clientId: process.env.SPOTIFY_CLIENT_ID,
+    clientSecret: process.env.SPOTIFY_CLIENT_SECRET,
+    redirectUri: redirectUri,
+  })
+  
   if (accessToken) {
-    spotifyApi.setAccessToken(accessToken)
+    client.setAccessToken(accessToken)
   }
-  return spotifyApi
+  return client
 }
 
 export const getAuthUrl = (state: string) => {

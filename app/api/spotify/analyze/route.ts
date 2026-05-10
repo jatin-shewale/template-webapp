@@ -3,8 +3,11 @@ import { analyzePersonality, SpotifyArtist, SpotifyTrack, SpotifyAudioFeatures }
 import { NextRequest, NextResponse } from "next/server"
 
 export async function GET(request: NextRequest) {
+  const allCookies = request.cookies.getAll()
+  console.log("Analyze Route - All Cookies:", allCookies.map(c => c.name))
+
   const accessToken = request.cookies.get("spotify_access_token")?.value
-  console.log("Analyze Route - All Cookies:", request.cookies.getAll().map(c => c.name))
+  console.log("Spotify Access Token:", accessToken ? accessToken.substring(0, 20) + "..." : undefined)
   console.log("Analyze Route - Access Token Found:", !!accessToken)
 
   if (!accessToken) {
@@ -14,10 +17,22 @@ export async function GET(request: NextRequest) {
   try {
     const spotifyApi = getSpotifyApi(accessToken)
 
-    const [topArtistsRes, topTracksRes] = await Promise.all([
-      spotifyApi.getMyTopArtists({ limit: 50, time_range: "long_term" }),
-      spotifyApi.getMyTopTracks({ limit: 50, time_range: "long_term" }),
-    ])
+    let topArtistsRes;
+    let topTracksRes;
+
+    try {
+      topArtistsRes = await spotifyApi.getMyTopArtists({ limit: 50, time_range: "long_term" })
+    } catch (e) {
+      console.warn("Failed to fetch top artists:", e)
+      topArtistsRes = { body: { items: [] } }
+    }
+
+    try {
+      topTracksRes = await spotifyApi.getMyTopTracks({ limit: 50, time_range: "long_term" })
+    } catch (e) {
+      console.warn("Failed to fetch top tracks:", e)
+      topTracksRes = { body: { items: [] } }
+    }
 
     const topArtists: SpotifyArtist[] = topArtistsRes.body.items.map((artist: any) => ({
       id: artist.id,
@@ -38,11 +53,21 @@ export async function GET(request: NextRequest) {
     }))
 
     const trackIds = topTracks.map(t => t.id)
-    const audioFeaturesRes = await spotifyApi.getAudioFeaturesForTracks(trackIds)
+    
+    let audioFeaturesList: any[] = []
+    if (trackIds.length > 0) {
+      try {
+        const audioFeaturesRes = await spotifyApi.getAudioFeaturesForTracks(trackIds)
+        audioFeaturesList = audioFeaturesRes.body.audio_features || []
+      } catch (err) {
+        console.warn("Could not fetch audio features:", err)
+        audioFeaturesList = []
+      }
+    }
 
     const audioFeaturesWithTracks = topTracks.map((track, i) => ({
       track,
-      audioFeatures: audioFeaturesRes.body.audio_features[i] || {
+      audioFeatures: audioFeaturesList[i] || {
         acousticness: 0.5,
         danceability: 0.5,
         energy: 0.5,
